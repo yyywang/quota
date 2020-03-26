@@ -11,7 +11,7 @@ class DevelopmentSecure(BaseConfig):
     """
     开发环境安全性配置
     """
-    SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:123456@localhost:3306/lin-cms'
+    SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:python0096@localhost:3306/lin-cms'
 
     SQLALCHEMY_ECHO = False
 

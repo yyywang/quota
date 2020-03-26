@@ -5,7 +5,7 @@
 
 import re
 import time
-
+from html import unescape
 from flask import current_app, jsonify, request
 from lin.exception import ParameterException
 
@@ -47,3 +47,37 @@ def json_res(**kwargs):
     count, items, page, total, total_page ...
     '''
     return jsonify(kwargs)
+
+
+def html_to_plain_text(html):
+    """
+    提取 html 格式的文本为纯文本
+    :param html: 
+    :return: 
+    """
+    text = re.sub('<head.*?>.*?</head>', '', html, flags=re.M | re.S | re.I)
+    text = re.sub('<a\s.*?>', ' HYPERLINK ', text, flags=re.M | re.S | re.I)
+    text = re.sub('<.*?>', '', text, flags=re.M | re.S)
+    text = re.sub(r'(\s*\n)+', '\n', text, flags=re.M | re.S)
+    return unescape(text)
+
+def json_paginate(paginate):
+    return {
+        "has_next": paginate.has_next,
+        "has_prev": paginate.has_prev,
+        "next_num": paginate.next_num,
+        "page": paginate.page,
+        "pages": paginate.pages,
+        "per_page": paginate.per_page,
+        "prev_num": paginate.prev_num,
+        "total": paginate.total,
+        "items":paginate.items
+    }
+
+def dict_rm_none(data):
+    """将字典中值为 None 的键值对剔除"""
+    for key in list(data.keys()):
+        if data.get(key) is None:
+            del data[key]
+
+    return data

@@ -2,11 +2,15 @@
     :copyright: © 2019 by the Lin team.
     :license: MIT, see LICENSE for more details.
 """
-
 from app.app import create_app
+from app.libs.init_data import init_admin, init_banner_status
 
 app = create_app(environment='development')
 
+@app.before_first_request
+def init_data():
+    init_admin()
+    init_banner_status()
 
 @app.route('/', methods=['GET'], strict_slashes=False)
 def lin_slogan():

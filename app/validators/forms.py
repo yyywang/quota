@@ -3,14 +3,18 @@
     :license: MIT, see LICENSE for more details.
 """
 from lin import manager
+from lin.exception import ParameterException
 from wtforms import DateTimeField, PasswordField, FieldList, IntegerField, StringField
-from wtforms.validators import DataRequired, Regexp, EqualTo, length, Optional, NumberRange
+from wtforms.validators import DataRequired, Regexp, EqualTo, length, Optional, NumberRange, Length, URL
 import time
-
+from app.libs.utils import html_to_plain_text
 from lin.forms import Form
 
 
 # 注册校验
+from app.models.category import Category
+
+
 class RegisterForm(Form):
     password = PasswordField('新密码', validators=[
         DataRequired(message='新密码不可为空'),
@@ -160,3 +164,83 @@ class CreateOrUpdateBookForm(Form):
     author = StringField(validators=[DataRequired(message='必须传入图书作者')])
     summary = StringField(validators=[DataRequired(message='必须传入图书综述')])
     image = StringField(validators=[DataRequired(message='必须传入图书插图')])
+
+
+# 短句相关
+class CreateQuotaForm(Form):
+    content = StringField(validators=[DataRequired()]) # html 格式文本
+    category_id = IntegerField() # 所属分类的id
+
+    def validate_content(self, field):
+        self.content.plain_text = html_to_plain_text(field.data) # 纯文本
+
+    def validate_category_id(self, field):
+        if field.data is not None:
+            self.category_id.data = int(field.data)
+
+# 为短句设置分类
+class QuotaSetCategoryForm(Form):
+    category_id = IntegerField(validators=[DataRequired()])
+
+    def validate_category_id(self, field):
+        self.category_id.data = int(field.data)
+
+
+# 分页返回
+class PaginationForm(Form):
+    page = IntegerField(default=1)
+
+    def validate_page(self, field):
+        self.page.data = int(field.data)
+
+
+# 分类相关
+class CreateCategoryForm(Form):
+    content = StringField(validators=[DataRequired(), Length(max=20)]) # 分类的内容，最长20个字符
+
+    def validate_content(self, field):
+        category = Category.query.filter_by(delete_time=None, content=field.data).first()
+        if category:
+            msg = '分类<' + str(field.data) + '>已存在'
+            raise ParameterException(msg=msg)
+
+
+class UpdateCategoryForm(Form):
+    content = StringField(validators=[Length(max=20)])
+
+
+# 广告相关
+class CreateAdForm(Form):
+    des = StringField(validators=[DataRequired(), Length(max=190)]) # 广告文字描述
+    cover_url = StringField(validators=[DataRequired(), URL()]) # 封面图片url
+    link_url = StringField(validators=[DataRequired(), URL()]) # 广告链接url
+    category_id = IntegerField()
+
+    def validate_category_id(self, field):
+        if field.data is not None:
+            self.category_id.data = int(field.data)
+
+
+class UpdateAdForm(Form):
+    des = StringField(validators=[Length(max=190), Optional()])
+    cover_url = StringField(validators=[URL(), Optional()])
+    link_url = StringField(validators=[URL(), Optional()])
+
+
+# 为广告设置分类
+class AdSetCategoryForm(Form):
+    category_id = IntegerField(validators=[DataRequired()])
+
+    def validate_category_id(self, field):
+        self.category_id.data = int(field.data)
+
+
+# banner 相关
+class CreateBannerForm(Form):
+    cover_url = StringField(validators=[DataRequired(), URL()])
+    link_url = StringField(validators=[URL(), Optional()])
+
+
+class UpdateBannerForm(Form):
+    cover_url = StringField(validators=[Optional(), URL()])
+    link_url = StringField(validators=[URL(), Optional()])
