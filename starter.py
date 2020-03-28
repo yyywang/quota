@@ -5,7 +5,7 @@
 from app.app import create_app
 from app.libs.init_data import init_admin, init_banner_status
 
-app = create_app(environment='development')
+app = create_app(environment='production')
 
 @app.before_first_request
 def init_data():
