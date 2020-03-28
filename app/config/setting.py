@@ -20,7 +20,7 @@ class BaseConfig(object):
     # 微信小程序相关
     WX_LOGIN_BASE_URL = "https://api.weixin.qq.com/sns/jscode2session"
 
-    SITE_DOMAIN = "http://http://192.144.185.148"
+    SITE_DOMAIN = "http://192.144.185.148"
 
 
 class DevelopmentConfig(BaseConfig):
