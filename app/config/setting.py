@@ -11,7 +11,7 @@ class BaseConfig(object):
     基础配置
     """
     # 分页配置
-    COUNT_DEFAULT = 5
+    COUNT_DEFAULT = 10
     PAGE_DEFAULT = 0
 
     # 屏蔽 sql alchemy 的 FSADeprecationWarning
