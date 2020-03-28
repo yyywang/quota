@@ -26,7 +26,7 @@ class ProductionSecure(BaseConfig):
     """
     生产环境安全性配置
     """
-    SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:123456@localhost:3306/lin-cms'
+    SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:123456@localhost:3306/lincms'
 
     SQLALCHEMY_ECHO = False
 
