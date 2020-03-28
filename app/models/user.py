@@ -43,7 +43,7 @@ class CUser(_User):
             with db.auto_commit():
                 user = manager.user_model()
                 user.wx_open_id = wx_open_id
-                user.username = 'mina_' + str(uuid.uuid4())
+                user.username = 'mina_' + str(manager.user_model.query.count())
                 db.session.add(user)
             return Success()
 
