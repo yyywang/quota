@@ -6,6 +6,8 @@
 import re
 import time
 from html import unescape
+
+import math
 from flask import current_app, jsonify, request
 from lin.exception import ParameterException
 
@@ -81,3 +83,24 @@ def dict_rm_none(data):
             del data[key]
 
     return data
+
+def paginate_data(data_list, page=1 ,per_page=10):
+    """将数据分页返回"""
+    pages = int(math.ceil(len(data_list) / per_page))
+    page = int(page)
+    per_page = int(per_page)
+    has_next = True if pages > page else False
+    has_prev = True if 1 < page <= int(pages) else False
+    items = data_list[(page-1)*per_page : page*per_page]
+
+    return {
+        "item_list": items,
+        "page": page,
+        "total": len(data_list),
+        "pages": pages,
+        "has_next": has_next,
+        "next_num": page + 1 if has_next else None,
+        "per_page": per_page,
+        "has_prev": has_prev,
+        "prev_num": page - 1 if has_prev else None
+    }

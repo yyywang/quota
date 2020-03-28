@@ -14,6 +14,9 @@ class Banner(Base):
     cover_url = Column(String(190)) # 封面图片
     link_url = Column(Text) # 链接地址
 
+    def _set_fields(self):
+        self._fields = ['id', 'link_url', '_cover_url']
+
     @classmethod
     def create_banner(cls, data):
         """创建一个轮播图"""
@@ -36,3 +39,7 @@ class Banner(Base):
     def remove_banner(cls, bid):
         banner = cls.query.filter_by(id=bid, delete_time=None).first_or_404()
         banner.delete(commit=True)
+
+    @property
+    def _cover_url(self):
+        return eval(repr(self.cover_url).replace(r"\\", "/"))

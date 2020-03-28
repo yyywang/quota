@@ -2,6 +2,8 @@
 """
   Created by Wesley on 2020/3/24.
 """
+import random
+
 from lin import db
 from lin.exception import NotFound
 from lin.interface import InfoCrud as Base
@@ -20,7 +22,7 @@ class Ad(Base):
     category = relationship('Category', back_populates='ads') # 所属分类
 
     def _set_fields(self):
-        self._fields = ['id', 'des', 'cover_url', 'link_url', 'category']
+        self._fields = ['id', 'des', '_cover_url', 'link_url', 'category', 'click_num']
 
     @classmethod
     def remove_ad(cls, aid):
@@ -44,3 +46,12 @@ class Ad(Base):
         ad = cls.query.filter_by(id=quota_id, delete_time=None).first_or_404()
         with db.auto_commit():
             category.ads.append(ad)
+
+    @property
+    def click_num(self):
+        """随机生成点击数"""
+        return round(random.random() * 10, 2)
+
+    @property
+    def _cover_url(self):
+        return eval(repr(self.cover_url).replace(r"\\", "/"))

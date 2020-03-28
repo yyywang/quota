@@ -178,6 +178,20 @@ class CreateQuotaForm(Form):
         if field.data is not None:
             self.category_id.data = int(field.data)
 
+
+class GetQuotasForm(Form):
+    category = StringField(default='全部')
+    order_by = StringField(default='random')
+    page = IntegerField(default=1)
+
+    def validate_page(self, field):
+        self.page.data = int(field.data)
+
+    def validate_order_by(self, field):
+        if field.data not in ['random', 'desc']:
+            raise ParameterException(msg='排序参数错误')
+
+
 # 为短句设置分类
 class QuotaSetCategoryForm(Form):
     category_id = IntegerField(validators=[DataRequired()])
@@ -233,6 +247,14 @@ class AdSetCategoryForm(Form):
 
     def validate_category_id(self, field):
         self.category_id.data = int(field.data)
+
+
+class GetAdsForm(Form):
+    category = StringField(default='全部')
+    page = IntegerField(default=1)
+
+    def validate_page(self, field):
+        self.page.data = int(field.data)
 
 
 # banner 相关

@@ -17,6 +17,9 @@ class BaseConfig(object):
     # 屏蔽 sql alchemy 的 FSADeprecationWarning
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # 微信小程序相关
+    WX_LOGIN_BASE_URL = "https://api.weixin.qq.com/sns/jscode2session"
+
 
 class DevelopmentConfig(BaseConfig):
     """

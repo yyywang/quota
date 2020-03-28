@@ -76,7 +76,8 @@ def create_app(register_all=True, environment='production'):
     app.config.from_object('app.config.log')
     if register_all:
         register_blueprints(app)
-        Lin(app)
+        from app.models.user import CUser
+        Lin(app, user_model=CUser)
         register_before_request(app)
         register_after_request(app)
         apply_cors(app)

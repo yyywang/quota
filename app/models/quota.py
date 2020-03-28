@@ -2,12 +2,14 @@
 """
   Created by Wesley on 2020/3/23.
 """
+from flask_jwt_extended import get_current_user
 from lin import db
 from lin.exception import NotFound
 from lin.interface import InfoCrud as Base
 from sqlalchemy import Column, Integer, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from app.models.category import Category
+from app.models.association_tables import like_and_quota, collect_and_quota
 
 
 class Quota(Base):
@@ -16,9 +18,12 @@ class Quota(Base):
     content_text = Column(Text) # 纯文本格式
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship('Category', back_populates='quotas') # 所属分类
+    liked_users = relationship('CUser', secondary=like_and_quota ,back_populates='liked_quotas') # 点赞该语录的用户
+    collected_users = relationship('CUser', secondary=collect_and_quota, back_populates='collected_quotas')  # 收藏该语录的用户
 
     def _set_fields(self):
-        self._fields = ['id', 'content', 'content_text', 'category']
+        self._fields = ['id', 'content', 'content_text', 'category', 'statistics',
+                        'is_like', 'is_collect']
 
     @classmethod
     def update_quota(cls, qid, form):
@@ -48,3 +53,22 @@ class Quota(Base):
         quota = Quota.query.filter_by(id=quota_id, delete_time=None).first_or_404()
         with db.auto_commit():
             category.quotas.append(quota)
+
+    @property
+    def statistics(self):
+        return dict(
+            like_num=len(self.liked_users),
+            collect_num=len(self.collected_users)
+        )
+
+    @property
+    def is_like(self):
+        """当前用户是否点赞此短句"""
+        current_user = get_current_user()
+        return True if current_user in self.liked_users else False
+
+    @property
+    def is_collect(self):
+        """当前用户是否收藏此短句"""
+        current_user = get_current_user()
+        return True if current_user in self.collected_users else False
