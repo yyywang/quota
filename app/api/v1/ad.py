@@ -4,6 +4,8 @@
 """
 from flask import current_app, jsonify
 from lin.redprint import Redprint
+from sqlalchemy import func
+
 from app.libs.utils import json_paginate
 from app.models.ad import Ad
 from app.models.category import Category
@@ -24,3 +26,9 @@ def get_ads():
             Ad._create_time.desc()).paginate(form.page.data, per_page)
 
     return jsonify(json_paginate(ads))
+
+@ad_api.route('/random')
+def get_random_ad():
+    """随机返回一条广告数据"""
+    ad = Ad.query.filter_by(delete_time=None).order_by(func.rand()).limit(1).all()
+    return jsonify(ad)

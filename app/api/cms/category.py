@@ -9,7 +9,7 @@ from lin.redprint import Redprint
 
 from app.libs.utils import json_paginate
 from app.models.category import Category
-from app.validators.forms import CreateCategoryForm, UpdateCategoryForm, PaginationForm
+from app.validators.forms import CreateCategoryForm, UpdateCategoryForm, PaginationForm, GetCategoriesForm
 
 category_api = Redprint('category')
 
@@ -18,7 +18,7 @@ category_api = Redprint('category')
 @admin_required
 def create_category():
     form = CreateCategoryForm().validate_for_api()
-    Category.create(content=form.content.data, commit=True)
+    Category.create(content=form.content.data, type=form.type.data, commit=True)
     return Success()
 
 @category_api.route('/<int:cid>')
@@ -30,9 +30,18 @@ def get_category(cid):
 @category_api.route('')
 @admin_required
 def get_categorys():
-    """获取所有标签，分页返回"""
-    categorys = Category.query.filter_by(delete_time=None).order_by(
-        Category._create_time.desc()).all()
+    """获取标签，分页返回
+    
+    :params:
+        <int:type>: 1-短句；2-广告
+    """
+    form = GetCategoriesForm().validate_for_api()
+    if form.type.data is None:
+        categorys = Category.query.filter_by(delete_time=None).order_by(
+            Category._create_time.desc()).all()
+    else:
+        categorys = Category.query.filter_by(delete_time=None, type=form.type.data).order_by(
+            Category._create_time.desc()).all()
 
     return jsonify(categorys)
 

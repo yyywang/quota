@@ -104,3 +104,11 @@ def paginate_data(data_list, page=1 ,per_page=10):
         "has_prev": has_prev,
         "prev_num": page - 1 if has_prev else None
     }
+
+def rm_deleted_data(data):
+    """移除已删除的数据"""
+    return [item for item in data if item.delete_time is None]
+
+def rm_paginate_deleted_data(data):
+    data.items = rm_deleted_data(data.items)
+    return data

@@ -55,7 +55,8 @@ def get_quotas():
         raise ParameterException()
 
     ad = Ad.query.filter_by(delete_time=None).order_by(func.rand()).limit(1).first()
-    quotas['items'].append(ad)
+    if ad is not None:
+        quotas['items'].append(ad)
 
     return jsonify(quotas)
 

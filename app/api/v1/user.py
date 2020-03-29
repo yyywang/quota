@@ -7,7 +7,7 @@ from flask_jwt_extended import get_current_user
 from lin import login_required
 from lin.redprint import Redprint
 
-from app.libs.utils import paginate_data
+from app.libs.utils import paginate_data, rm_deleted_data, rm_paginate_deleted_data
 from app.validators.forms import PaginationForm
 
 user_api = Redprint('user')
@@ -19,7 +19,7 @@ def get_collected_quotas():
     form = PaginationForm().validate_for_api()
     per_page = current_app.config['COUNT_DEFAULT']
     current_uer = get_current_user()
-    paginate = paginate_data(current_uer.collected_quotas, form.page.data, per_page)
+    paginate = paginate_data(current_uer.not_deleted_collected_quotas, form.page.data, per_page)
     return jsonify(paginate)
 
 @user_api.route('/likes')
@@ -29,5 +29,5 @@ def get_liked_quotas():
     form = PaginationForm().validate_for_api()
     per_page = current_app.config['COUNT_DEFAULT']
     current_uer = get_current_user()
-    paginate = paginate_data(current_uer.liked_quotas, form.page.data, per_page)
+    paginate = paginate_data(current_uer.not_deleted_liked_quotas, form.page.data, per_page)
     return jsonify(paginate)

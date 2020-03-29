@@ -17,6 +17,10 @@ def register_blueprints(app):
     app.register_blueprint(create_v1(), url_prefix='/v1')
     app.register_blueprint(create_cms(), url_prefix='/cms')
 
+def register_plugins(app):
+    from flask_migrate import Migrate
+    from lin.db import db
+    Migrate(app, db)
 
 def apply_cors(app):
     CORS(app)
@@ -80,6 +84,7 @@ def create_app(register_all=True, environment='production'):
         Lin(app, user_model=CUser)
         register_before_request(app)
         register_after_request(app)
+        register_plugins(app)
         apply_cors(app)
         # 创建所有表格
         create_tables(app)

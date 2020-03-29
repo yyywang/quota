@@ -211,16 +211,35 @@ class PaginationForm(Form):
 # 分类相关
 class CreateCategoryForm(Form):
     content = StringField(validators=[DataRequired(), Length(max=20)]) # 分类的内容，最长20个字符
+    type = IntegerField(default=1) # 1-短句分类；2-广告分类
+
+    def validate_type(self, field):
+        if field.data not in [1, 2]:
+            raise ParameterException()
+        self.type.data = int(field.data)
 
     def validate_content(self, field):
-        category = Category.query.filter_by(delete_time=None, content=field.data).first()
+        category = Category.query.filter_by(delete_time=None, content=field.data, type=int(self.type.data)).first()
         if category:
             msg = '分类<' + str(field.data) + '>已存在'
             raise ParameterException(msg=msg)
 
 
+class GetCategoriesForm(Form):
+    type = IntegerField()
+
+    def validate_type(self, field):
+        if field.data is not None:
+            self.type.data = int(field.data)
+
+
 class UpdateCategoryForm(Form):
     content = StringField(validators=[Length(max=20)])
+    type = IntegerField()
+
+    def validate_type(self, field):
+        if field.data is not None:
+            self.type.data = int(field.data)
 
 
 # 广告相关

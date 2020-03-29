@@ -41,9 +41,9 @@ class Ad(Base):
         return True
 
     @classmethod
-    def set_category(cls, quota_id, category_id):
+    def set_category(cls, ad_id, category_id):
         category = Category.query.filter_by(id=category_id, delete_time=None).first_or_404()
-        ad = cls.query.filter_by(id=quota_id, delete_time=None).first_or_404()
+        ad = cls.query.filter_by(id=ad_id, delete_time=None).first_or_404()
         with db.auto_commit():
             category.ads.append(ad)
 

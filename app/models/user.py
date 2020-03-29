@@ -72,3 +72,13 @@ class CUser(_User):
                 self.collected_quotas.append(quota)
                 is_collect = True
         return is_collect
+
+    @property
+    def not_deleted_collected_quotas(self):
+        # 去除被删除的语录
+        return [item for item in self.collected_quotas if item.delete_time is None]
+
+    @property
+    def not_deleted_liked_quotas(self):
+        # 去除被删除的语录
+        return [item for item in self.liked_quotas if item.delete_time is None]
