@@ -2,14 +2,12 @@
 """
   Created by Wesley on 2020/3/24.
 """
-from flask import jsonify, current_app
+from flask import jsonify
 from lin import admin_required
 from lin.exception import Success
 from lin.redprint import Redprint
-
-from app.libs.utils import json_paginate
 from app.models.category import Category
-from app.validators.forms import CreateCategoryForm, UpdateCategoryForm, PaginationForm, GetCategoriesForm
+from app.validators.forms import CreateCategoryForm, UpdateCategoryForm, GetCategoriesForm
 
 category_api = Redprint('category')
 
