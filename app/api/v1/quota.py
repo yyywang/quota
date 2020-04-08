@@ -17,7 +17,7 @@ from app.validators.forms import GetQuotasForm
 quota_api = Redprint('quotas')
 
 @quota_api.route('')
-@login_required
+# @login_required
 def get_quotas():
     """
     获取短句，9个短句+1个广告
@@ -61,7 +61,7 @@ def get_quotas():
     return jsonify(quotas)
 
 @quota_api.route('/<int:qid>')
-@login_required
+# @login_required
 def get_quota(qid):
     """返回 id=id 的具体数据"""
     quota = Quota.query.filter_by(id=qid, delete_time=None).first_or_404()
